@@ -40,6 +40,34 @@ def shift_rows(state):
     # fouth row: shift 3 left (equal to 1 right)
     state[3] = state[3][-1:] + state[3][0:-1]
 
+def mix_columns(state):
+    tmp = [row.copy() for row in state] # copy 2d state array
+    
+    for i in range(4):
+        state[0][i] = multiply_in_galois(0x02, tmp[0][i]) ^ multiply_in_galois(0x03, tmp[1][i]) ^ tmp[2][i] ^ tmp[3][i]
+        state[1][i] = tmp[0][i] ^ multiply_in_galois(0x02, tmp[1][i]) ^ multiply_in_galois(0x03, tmp[2][i]) ^ tmp[3][i]
+        state[2][i] = tmp[0][i] ^ tmp[1][i] ^ multiply_in_galois(0x02, tmp[2][i]) ^ multiply_in_galois(0x03, tmp[3][i])
+        state[3][i] = multiply_in_galois(0x03, tmp[0][i]) ^ tmp[1][i] ^ tmp[2][i] ^ multiply_in_galois(0x02, tmp[3][i])
+
+# MixColumns requires the multiplication to be done in GF(2^8). Inputs should be bytes
+# Peasant's Algorithm: https://en.wikipedia.org/wiki/Finite_field_arithmetic#Rijndael's_(AES)_finite_field
+def multiply_in_galois(a, b):
+    p = 0 # final product
+
+    for i in range(8): # once per bit
+        if b & 1 == 1:
+            p ^= a
+
+        b = b >> 1
+
+        carry = 1 if (a & 0x80 == 0x80) else 0
+
+        a = a << 1
+
+        if carry == 1:
+            a ^= 0x1b
+
+    return p % 256
 
 # Normal printing is going to print integers in decimal
 # For debugging, hex is much easier
@@ -68,5 +96,6 @@ state = [
 
 sub_bytes(state)
 shift_rows(state)
+mix_columns(state)
 
 print_state(state)
