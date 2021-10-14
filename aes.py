@@ -72,17 +72,17 @@ def multiply_in_galois(a, b):
 # Normal printing is going to print integers in decimal
 # For debugging, hex is much easier
 def print_state(state):
-    string = "[\n"
+    string = '[\n'
 
     for i in range(len(state)):
-        string += "  ["
+        string += '  ['
         for j in range(len(state[i])):
-            string += hex(state[i][j]) + ", "
+            string += '{:#04x}'.format(state[i][j]) + ', '
 
-        string = string[:-2] # remove the ", " from last element
-        string += "]\n"
+        string = string[:-2] # remove the ', ' from last element
+        string += ']\n'
 
-    string += "]"
+    string += ']'
 
     print(string)
 
