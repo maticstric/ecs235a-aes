@@ -28,6 +28,19 @@ def sub_bytes(state):
         for j in range(4):
             state[i][j] = SBOX[state[i][j]]
 
+def shift_rows(state):
+    # first row: no shift
+
+    # second row: shift 1 left
+    state[1] = state[1][1:] + state[1][:1]
+
+    # third row: shift 2 left
+    state[2] = state[2][2:] + state[2][:2]
+
+    # fouth row: shift 3 left (equal to 1 right)
+    state[3] = state[3][-1:] + state[3][0:-1]
+
+
 # Normal printing is going to print integers in decimal
 # For debugging, hex is much easier
 def print_state(state):
@@ -54,5 +67,6 @@ state = [
 ]
 
 sub_bytes(state)
+shift_rows(state)
 
 print_state(state)
