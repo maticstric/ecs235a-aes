@@ -1,7 +1,6 @@
 # AES
 import math
 
-BLOCK_SIZE = 16 # in bytes
 KEY_LENGTH = 16 # in bytes
 NUMBER_OF_ROUNDS = 10
 
@@ -25,8 +24,8 @@ SBOX = [
 ]
 
 def sub_bytes(state):
-    for i in range(math.isqrt(BLOCK_SIZE)):
-        for j in range(math.isqrt(BLOCK_SIZE)):
+    for i in range(4):
+        for j in range(4):
             state[i][j] = SBOX[state[i][j]]
 
 # Normal printing is going to print integers in decimal
