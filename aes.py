@@ -39,6 +39,21 @@ RCON = [
     [0x36, 0x00, 0x00, 0x00]
 ]
 
+def main():
+    state = [
+        [0x32, 0x88, 0x31, 0xe0],
+        [0x43, 0x5a, 0x31, 0x37],
+        [0xf6, 0x30, 0x98, 0x07],
+        [0xa8, 0x8d, 0xa2, 0x34]
+    ]
+
+    key = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c]
+    keys = key_expansion(key)
+
+    encrypt_block(state, keys)
+
+    print_2d_hex(state)
+
 def sub_bytes(state):
     for i in range(4):
         for j in range(4):
@@ -69,7 +84,7 @@ def add_round_key(state, key):
     for i in range(4):
         for j in range(4):
             # j and i flipped intentionally since it's column-major order
-            state[j][i] ^= key[i * 4 + j] # the key is a 1d array so indexing is a bit weird
+            state[j][i] ^= key[i][j]
 
 def key_expansion(key):
     keys = []
@@ -96,6 +111,19 @@ def key_expansion(key):
         i += 1
 
     return keys
+
+def encrypt_block(state, keys):
+    add_round_key(state, keys[:4])
+
+    for i in range(1, NUMBER_OF_ROUNDS):
+        sub_bytes(state)
+        shift_rows(state)
+        mix_columns(state)
+        add_round_key(state, keys[(i * 4):(i * 4 + 4)])
+
+    sub_bytes(state)
+    shift_rows(state)
+    add_round_key(state, keys[NUMBER_OF_ROUNDS * 4:((NUMBER_OF_ROUNDS + 1) * 4)])
 
 def sub_word(word): # word is 4 bytes, in array length 4
     sub_word = []
@@ -168,21 +196,5 @@ def print_1d_hex(arr):
 
     print(string)
 
-state = [
-    [0x32, 0x88, 0x31, 0xe0],
-    [0x43, 0x5a, 0x31, 0x37],
-    [0xf6, 0x30, 0x98, 0x07],
-    [0xa8, 0x8d, 0xa2, 0x34]
-]
-
-key = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c]
-keys = key_expansion(key)
-
-add_round_key(state, keys[0] + keys[1] + keys[2] + keys[3])
-
-sub_bytes(state)
-shift_rows(state)
-mix_columns(state)
-add_round_key(state, keys[4] + keys[5] + keys[6] + keys[7])
-
-print_2d_hex(state)
+if __name__=="__main__":
+    main()
