@@ -134,19 +134,30 @@ def multiply_in_galois(a, b):
 
     return p % 256
 
-# Normal printing is going to print integers in decimal
-# For debugging, hex is much easier
-def print_state(state):
+# Normal printing is going to print integers in decimal. For debugging, hex is much easier
+def print_2d_hex(arr):
     string = '[\n'
 
-    for i in range(len(state)):
+    for i in range(len(arr)):
         string += '  ['
-        for j in range(len(state[i])):
-            string += '{:#04x}'.format(state[i][j]) + ', '
+        for j in range(len(arr[i])):
+            string += '{:#04x}'.format(arr[i][j]) + ', '
 
         string = string[:-2] # remove the ', ' from last element
         string += ']\n'
 
+    string += ']'
+
+    print(string)
+
+# Normal printing is going to print integers in decimal. For debugging, hex is much easier
+def print_1d_hex(arr):
+    string = '['
+
+    for i in range(len(arr)):
+        string += '{:#04x}'.format(arr[i]) + ', '
+
+    string = string[:-2] # remove the ', ' from last element
     string += ']'
 
     print(string)
@@ -164,10 +175,10 @@ key = [0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe, 0x2b, 0x73, 0xae, 0xf0, 0
 
 keys = key_expansion(key)
 
-print_state(keys)
+print_2d_hex(keys)
 
 sub_bytes(state)
 shift_rows(state)
 mix_columns(state)
 
-print_state(state)
+print_2d_hex(state)
