@@ -40,19 +40,40 @@ RCON = [
 ]
 
 def main():
-    state = [
-        [0x32, 0x88, 0x31, 0xe0],
-        [0x43, 0x5a, 0x31, 0x37],
-        [0xf6, 0x30, 0x98, 0x07],
-        [0xa8, 0x8d, 0xa2, 0x34]
-    ]
-
     key = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c]
+    message_array = [0x32, 0x88, 0x31, 0xe0, 0x43, 0x5a, 0x31, 0x37, 0xf6, 0x30, 0x98, 0x07, 0xa8, 0x8d, 0xa2, 0x34, 0x32, 0x88, 0x31, 0xe0, 0x43, 0x5a, 0x31, 0x37, 0xf6, 0x30, 0x98, 0x07, 0xa8]
+
+    pad_message_array(message_array)
+
     keys = key_expansion(key)
+    blocks = split_message_array_into_blocks(message_array)
 
-    encrypt_block(state, keys)
+    print('plaintext blocks:')
+    for b in blocks:
+        print_2d_hex(b)
 
-    print_2d_hex(state)
+    encrypt_message(blocks, keys)
+
+    print('--------------------------\nciphertext blocks:')
+    for b in blocks:
+        print_2d_hex(b)
+
+def encrypt_message(blocks, keys):
+    for i in range(len(blocks)):
+        encrypt_block(blocks[i], keys)
+
+def encrypt_block(state, keys):
+    add_round_key(state, keys[:4])
+
+    for i in range(1, NUMBER_OF_ROUNDS):
+        sub_bytes(state)
+        shift_rows(state)
+        mix_columns(state)
+        add_round_key(state, keys[(i * 4):(i * 4 + 4)])
+
+    sub_bytes(state)
+    shift_rows(state)
+    add_round_key(state, keys[NUMBER_OF_ROUNDS * 4:((NUMBER_OF_ROUNDS + 1) * 4)])
 
 def sub_bytes(state):
     for i in range(4):
@@ -112,18 +133,28 @@ def key_expansion(key):
 
     return keys
 
-def encrypt_block(state, keys):
-    add_round_key(state, keys[:4])
+# OneAndZeroes padding
+def pad_message_array(message_array): # message_array is array of bytes
+    bytes_missing = 16 - len(message_array) % 16
 
-    for i in range(1, NUMBER_OF_ROUNDS):
-        sub_bytes(state)
-        shift_rows(state)
-        mix_columns(state)
-        add_round_key(state, keys[(i * 4):(i * 4 + 4)])
+    if bytes_missing > 0 and bytes_missing < 16: # if len(message_array) = 16 then bytes_missing = 16, so we need to check that bytes_missing < 16
+        message_array.append(0x80)
 
-    sub_bytes(state)
-    shift_rows(state)
-    add_round_key(state, keys[NUMBER_OF_ROUNDS * 4:((NUMBER_OF_ROUNDS + 1) * 4)])
+        for i in range(bytes_missing - 1):
+            message_array.append(0x00)
+
+def split_message_array_into_blocks(message_array):
+    blocks = []
+
+    for i in range(math.ceil(len(message_array) / 16)):
+        block = []
+
+        for j in range(i * 4, (i + 1) * 4):
+            block.append(message_array[(j * 4):((j + 1) * 4)])
+
+        blocks.append(block)
+
+    return blocks
 
 def sub_word(word): # word is 4 bytes, in array length 4
     sub_word = []
