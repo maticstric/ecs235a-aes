@@ -58,6 +58,8 @@ def main():
     for b in blocks:
         print_2d_hex(b)
 
+    cipher_message_array = combine_blocks_into_message_array(blocks)
+
 def encrypt_message(blocks, keys):
     for i in range(len(blocks)):
         encrypt_block(blocks[i], keys)
@@ -155,6 +157,16 @@ def split_message_array_into_blocks(message_array):
         blocks.append(block)
 
     return blocks
+
+def combine_blocks_into_message_array(blocks):
+    message_array = []
+
+    for block in blocks:
+        for row in block:
+            for entry in row:
+                message_array.append(entry)
+
+    return message_array
 
 def sub_word(word): # word is 4 bytes, in array length 4
     sub_word = []
