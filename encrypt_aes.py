@@ -41,6 +41,13 @@ RCON = [
 
 def main():
     key = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c]
+    iv = [ # generated using random hex numbers
+        [0xed, 0x19, 0x8a, 0x91],
+        [0x8e, 0xf5, 0xa9, 0xa7],
+        [0xce, 0x51, 0xc5, 0x38],
+        [0x05, 0xf2, 0x30, 0x31]
+    ]
+
     message_array = [0x32, 0x88, 0x31, 0xe0, 0x43, 0x5a, 0x31, 0x37, 0xf6, 0x30, 0x98, 0x07, 0xa8, 0x8d, 0xa2, 0x34, 0x32, 0x88, 0x31, 0xe0, 0x43, 0x5a, 0x31, 0x37, 0xf6, 0x30, 0x98, 0x07, 0xa8]
 
     pad_message_array(message_array)
@@ -48,19 +55,23 @@ def main():
     keys = key_expansion(key)
     blocks = split_message_array_into_blocks(message_array)
 
-    print('plaintext blocks:')
-    for b in blocks:
-        print_2d_hex(b)
+    print('plaintext message array:')
+    print_1d_hex(message_array)
 
-    encrypt_message(blocks, keys)
-
-    print('--------------------------\nciphertext blocks:')
-    for b in blocks:
-        print_2d_hex(b)
-
+    encrypt_message_cbc(blocks, keys, iv)
     cipher_message_array = combine_blocks_into_message_array(blocks)
 
-def encrypt_message(blocks, keys):
+    print('\nciphertext message array:')
+    print_1d_hex(cipher_message_array)
+
+def encrypt_message_cbc(blocks, keys, iv):
+    for i in range(len(blocks)):
+        previous_ciphertext = iv if i == 0 else blocks[i - 1]
+        add_round_key(blocks[0], previous_ciphertext) # XOR with previous ciphertext before encrypting
+
+        encrypt_block(blocks[i], keys)
+
+def encrypt_message_ecb(blocks, keys):
     for i in range(len(blocks)):
         encrypt_block(blocks[i], keys)
 
