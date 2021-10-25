@@ -22,7 +22,7 @@ def main():
 def encrypt_message_cbc(blocks, keys, iv):
     for i in range(len(blocks)):
         previous_ciphertext = iv if i == 0 else blocks[i - 1]
-        add_round_key(blocks[0], previous_ciphertext) # XOR with previous ciphertext before encrypting
+        aes.add_round_key(blocks[i], previous_ciphertext) # XOR with previous ciphertext before encrypting
 
         encrypt_block(blocks[i], keys)
 
@@ -31,17 +31,17 @@ def encrypt_message_ecb(blocks, keys):
         encrypt_block(blocks[i], keys)
 
 def encrypt_block(state, keys):
-    add_round_key(state, keys[:4])
+    aes.add_round_key(state, keys[:4])
 
     for i in range(1, aes.NUMBER_OF_ROUNDS):
         sub_bytes(state)
         shift_rows(state)
         mix_columns(state)
-        add_round_key(state, keys[(i * 4):(i * 4 + 4)])
+        aes.add_round_key(state, keys[(i * 4):(i * 4 + 4)])
 
     sub_bytes(state)
     shift_rows(state)
-    add_round_key(state, keys[aes.NUMBER_OF_ROUNDS * 4:((aes.NUMBER_OF_ROUNDS + 1) * 4)])
+    aes.add_round_key(state, keys[aes.NUMBER_OF_ROUNDS * 4:((aes.NUMBER_OF_ROUNDS + 1) * 4)])
 
 def sub_bytes(state):
     for i in range(4):
@@ -69,11 +69,6 @@ def mix_columns(state):
         state[2][i] = tmp[0][i] ^ tmp[1][i] ^ aes.multiply_in_galois(0x02, tmp[2][i]) ^ aes.multiply_in_galois(0x03, tmp[3][i])
         state[3][i] = aes.multiply_in_galois(0x03, tmp[0][i]) ^ tmp[1][i] ^ tmp[2][i] ^ aes.multiply_in_galois(0x02, tmp[3][i])
 
-def add_round_key(state, key):
-    for i in range(4):
-        for j in range(4):
-            # j and i flipped intentionally since it's column-major order
-            state[j][i] ^= key[i][j]
 
 if __name__=="__main__":
     main()
