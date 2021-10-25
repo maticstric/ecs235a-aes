@@ -14,16 +14,14 @@ def main():
     encrypt_message_cbc(blocks, keys, aes.IV)
     #encrypt_message_ecb(blocks, keys)
 
-    cipher_message_array = aes.combine_blocks_into_message_array(blocks)
-
     print('\nciphertext message array:')
-    aes.print_1d_hex(cipher_message_array)
+    aes.print_1d_hex(aes.combine_blocks_into_message_array(blocks))
 
 def encrypt_message_cbc(blocks, keys, iv):
     for i in range(len(blocks)):
         previous_ciphertext = iv if i == 0 else blocks[i - 1]
-        aes.add_round_key(blocks[i], previous_ciphertext) # XOR with previous ciphertext before encrypting
 
+        aes.add_round_key(blocks[i], previous_ciphertext) # XOR with previous ciphertext before encrypting
         encrypt_block(blocks[i], keys)
 
 def encrypt_message_ecb(blocks, keys):
@@ -57,8 +55,8 @@ def shift_rows(state):
     # third row: shift 2 left
     state[2] = state[2][2:] + state[2][:2]
 
-    # fouth row: shift 3 left (equal to 1 right)
-    state[3] = state[3][-1:] + state[3][0:-1]
+    # fourth row: shift 3 left (equal to 1 right)
+    state[3] = state[3][-1:] + state[3][:-1]
 
 def mix_columns(state):
     tmp = [row.copy() for row in state] # copy 2d state array
