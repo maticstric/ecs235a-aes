@@ -2,20 +2,26 @@
 
 import aes
 
-def main():
-    aes.pad_message_array(aes.MESSAGE_ARRAY)
+def main(MESSAGE_ARRAY = aes.MESSAGE_ARRAY, type="cbc", output=True):
+    aes.pad_message_array(MESSAGE_ARRAY)
 
-    print('\nplaintext (padded) message array:')
-    aes.print_1d_hex(aes.MESSAGE_ARRAY)
+    if(output):
+        print('\nplaintext (padded) message array:')
+        aes.print_1d_hex(MESSAGE_ARRAY)
 
     keys = aes.key_expansion(aes.KEY)
-    blocks = aes.split_message_array_into_blocks(aes.MESSAGE_ARRAY)
+    blocks = aes.split_message_array_into_blocks(MESSAGE_ARRAY)
 
-    encrypt_message_cbc(blocks, keys, aes.IV)
-    #encrypt_message_ecb(blocks, keys)
+    if(type=="cbc"):
+        encrypt_message_cbc(blocks, keys, aes.IV)
+    else:
+        encrypt_message_ecb(blocks, keys)
 
-    print('\nciphertext message array:')
-    aes.print_1d_hex(aes.combine_blocks_into_message_array(blocks))
+    result = aes.combine_blocks_into_message_array(blocks)
+    if(output):
+        print('\nciphertext message array:')
+        aes.print_1d_hex(result)
+    return result
 
 def encrypt_message_cbc(blocks, keys, iv):
     for i in range(len(blocks)):

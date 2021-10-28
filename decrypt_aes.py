@@ -3,14 +3,14 @@
 import aes
 import encrypt_aes
 
-def main():
-    aes.pad_message_array(aes.MESSAGE_ARRAY)
+def main(MESSAGE_ARRAY = aes.MESSAGE_ARRAY):
+    aes.pad_message_array(MESSAGE_ARRAY)
 
     print('plaintext (padded) message array:')
-    aes.print_1d_hex(aes.MESSAGE_ARRAY)
+    aes.print_1d_hex(MESSAGE_ARRAY)
 
     keys = aes.key_expansion(aes.KEY)
-    blocks = aes.split_message_array_into_blocks(aes.MESSAGE_ARRAY)
+    blocks = aes.split_message_array_into_blocks(MESSAGE_ARRAY)
 
     #encrypt_aes.encrypt_message_ecb(blocks, keys)
     encrypt_aes.encrypt_message_cbc(blocks, keys, aes.IV)
@@ -24,7 +24,7 @@ def main():
     decipher_message_array = aes.combine_blocks_into_message_array(blocks)
 
     print('\ndecrypted plaintext message array:')
-    aes.print_1d_hex(aes.combine_blocks_into_message_array(blocks))
+    aes.print_1d_hex(decipher_message_array)
 
 def decrypt_message_cbc(blocks, keys, iv):
     previous_ciphertext = iv

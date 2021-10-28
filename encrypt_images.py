@@ -1,10 +1,13 @@
 from PIL import Image 
-from Crypto.Cipher import AES 
+from Crypto.Cipher import AES
+import encrypt_aes
 
+## Citation: Some of this work was outlined by Philip Wang, 
+# at https://www.quora.com/How-do-I-encrypt-and-decrypt-an-image-file-using-ECB-CBC-AES-encryption-or-something-like-this-in-python-using-a-program
  
-filename = "davis.png" 
-filename_out_ecb = "davis_encrypted_ecb" 
-filename_out_cbc = "davis_encrypted_cbc" 
+filename = "images/davis.png" 
+filename_out_ecb = "images/davis_encrypted_ecb" 
+filename_out_cbc = "images/davis_encrypted_cbc" 
 format = "PNG" 
 key = "aaaabbbbccccdddd" 
  
@@ -27,7 +30,8 @@ def process_image(filename):
     original = len(data)  
  
     # Encrypts using desired AES mode (we'll set it to ECB by default) 
-    ecb_image = convert_to_RGB(aes_ecb_encrypt(key, pad(data))[:original])  
+    ecb_image = convert_to_RGB(encrypt_aes.main(pad(data), "ecb", output=False)[:original])
+    # ecb_image = convert_to_RGB(aes_ecb_encrypt(key, pad(data))[:original])
      
     # Create a new PIL Image object and save the old image data into the new image. 
     im2 = Image.new(im.mode, im.size) 
@@ -36,7 +40,7 @@ def process_image(filename):
     #Save image 
     im2.save(filename_out_ecb+"."+format, format) 
 
-    cbc_image = convert_to_RGB(aes_cbc_encrypt(key, pad(data))[:original])
+    cbc_image = convert_to_RGB(encrypt_aes.main(pad(data), "cbc", output=False)[:original])
     im3 = Image.new(im.mode, im.size)
     im3.putdata(cbc_image)
     im3.save(filename_out_cbc+"."+format, format) 
