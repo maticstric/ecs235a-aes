@@ -1,6 +1,8 @@
 # SPN cipher taken from "Cryptography: Theory and Practice" by Douglas R. Stinson
 # Differential cryptanalysis based on the same book
 
+import random
+
 SBOX = [0xe, 0x4, 0xd, 0x1, 0x2, 0xf, 0xb, 0x8, 0x3, 0xa, 0x6, 0xc, 0x5, 0x9, 0x0, 0x7]
 INV_SBOX = [0xe, 0x3, 0x4, 0x8, 0x1, 0xc, 0xa, 0xf, 0x7, 0xd, 0x9, 0x6, 0xb, 0x2, 0x0, 0x5]
 
@@ -25,17 +27,77 @@ def main():
 
     diff_dist_table = build_difference_distribution_table(SBOX)
 
-    find_differential_trail([0xb, 0x0, 0xb, 0x0], diff_dist_table)
+    input_xor = [0x0, 0xb, 0x0, 0x0]
+
+    #common_xor, sbox_path = find_differential_trail(input_xor, diff_dist_table)
+    common_fourth_round_xor, sbox_path = find_differential_trail(input_xor, diff_dist_table)
+
+    print(common_fourth_round_xor)
+    print(sbox_path)
+
+    break_key_bits(input_xor, common_fourth_round_xor, sbox_path)
+
+def break_key_bits(input_xor, common_fourth_round_xor, sbox_path):
+    key_count_table = {}
+
+    for i in range(500): # This number is pulled out of thin air
+        text1 = choose_random_plaintext()
+        text2 = xor(text1, input_xor)
+
+        # Now, text1 ^ text2 = input_xor
+
+        encrypt(text1)
+        encrypt(text2)
+
+        partial_decryption(key_count_table, common_fourth_round_xor, text1, text2)
+
+        #for i in range(len(sbox_path[3])): # sbox_path[3] are the last, fourth round sboxes
+        #    sbox_active = sbox_path[3][i]
+
+        #    if sbox_active:
+        #        print('here')
+
+    print(dict(sorted(key_count_table.items(), key=lambda item: item[1])))
+
+def partial_decryption(key_count_table, common_fourth_round_xor, ciphertext1, ciphertext2):
+    for i in range(16):
+        for j in range(16):
+                key = [0x0, i, 0x0, j]
+                key_as_string = ' '.join(map(str, key))
+
+                partially_decrypted1 = xor(ciphertext1, key)
+                partially_decrypted2 = xor(ciphertext2, key)
+
+                inv_substitute(partially_decrypted1)
+                inv_substitute(partially_decrypted2)
+                
+                partial_xor = xor(partially_decrypted1, partially_decrypted2)
+
+                if partial_xor == common_fourth_round_xor:
+                    if key_as_string not in key_count_table:
+                        key_count_table[key_as_string] = 1
+                    else:
+                        key_count_table[key_as_string] += 1
 
 def find_differential_trail(input_xor, diff_dist_table):
+    """
+    returns (current_xor, sbox_path)
+    current_xor: Array of nibbles. By the end of this function, this will be the most common xor after the third round
+    sbox_path: 2D array of bools. Shows which sboxes were active during the path
+    """
+
     probability = 1
     active_sboxes = [False, False, False, False] # bool array of which sboxes are active
-    current_xor = input_xor.copy()
 
-    for r in range(3):
+    current_xor = input_xor.copy()
+    sbox_path = []
+
+    for r in range(3): # three rounds
         for i in range(len(current_xor)):
             if current_xor[i] > 0: active_sboxes[i] = True
             else: active_sboxes[i] = False
+
+        sbox_path.append(active_sboxes.copy())
 
         # XOR going through the sbox (source of nonlinearity)
         for i in range(len(active_sboxes)):
@@ -49,8 +111,15 @@ def find_differential_trail(input_xor, diff_dist_table):
 
         # XOR going through the permutation (linear)
         permutate(current_xor)
-    
-    print(probability)
+
+    # Calculate which of the sboxes were active at the end
+    for i in range(len(current_xor)):
+        if current_xor[i] > 0: active_sboxes[i] = True
+        else: active_sboxes[i] = False
+
+    sbox_path.append(active_sboxes.copy())
+
+    return (current_xor, sbox_path)
 
 def build_difference_distribution_table(sbox):
     diff_dist_table = [[0 for i in range(len(sbox))] for j in range(len(sbox))]
@@ -64,6 +133,16 @@ def build_difference_distribution_table(sbox):
 
     return diff_dist_table
 
+def choose_random_plaintext():
+    return [random.randrange(16) for n in range(4)]
+
+def xor(p1, p2):
+    xor = []
+
+    for i in range(len(p1)):
+        xor.append(p1[i] ^ p2[i])
+
+    return xor
 
 """ SPN Cipher """
 
