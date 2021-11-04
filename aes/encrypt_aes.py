@@ -2,21 +2,6 @@
 
 import aes
 
-def main():
-    aes.pad_message_array(aes.MESSAGE_ARRAY)
-
-    print('\nplaintext (padded) message array:')
-    aes.print_1d_hex(aes.MESSAGE_ARRAY)
-
-    keys = aes.key_expansion(aes.KEY)
-    blocks = aes.split_message_array_into_blocks(aes.MESSAGE_ARRAY)
-
-    encrypt_message_cbc(blocks, keys, aes.IV)
-    #encrypt_message_ecb(blocks, keys)
-
-    print('\nciphertext message array:')
-    aes.print_1d_hex(aes.combine_blocks_into_message_array(blocks))
-
 def encrypt_message_cbc(blocks, keys, iv):
     for i in range(len(blocks)):
         previous_ciphertext = iv if i == 0 else blocks[i - 1]
@@ -66,7 +51,3 @@ def mix_columns(state):
         state[1][i] = tmp[0][i] ^ aes.multiply_in_galois(0x02, tmp[1][i]) ^ aes.multiply_in_galois(0x03, tmp[2][i]) ^ tmp[3][i]
         state[2][i] = tmp[0][i] ^ tmp[1][i] ^ aes.multiply_in_galois(0x02, tmp[2][i]) ^ aes.multiply_in_galois(0x03, tmp[3][i])
         state[3][i] = aes.multiply_in_galois(0x03, tmp[0][i]) ^ tmp[1][i] ^ tmp[2][i] ^ aes.multiply_in_galois(0x02, tmp[3][i])
-
-
-if __name__=="__main__":
-    main()
