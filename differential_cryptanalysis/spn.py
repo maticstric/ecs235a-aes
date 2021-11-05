@@ -45,10 +45,14 @@ def break_round_key(round_num, most_probable_differential_trails):
 
         broken_key_nibbles = break_key_nibbles(round_num, input_xor, most_probable_output_xor)
 
-        # Set the round key and mark which key nibbles this broke
+        # Set the round key
         for i in range(4):
-            if broken_key_nibbles[i] != 0:
+            if round_key[i] == 0:
                 round_key[i] = broken_key_nibbles[i]
+
+        # Mark which key nibbles this broke
+        for i in range(4):
+            if most_probable_output_xor[i] != 0:
                 key_nibbles_broken[i] = True
 
     return round_key
