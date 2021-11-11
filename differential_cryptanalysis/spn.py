@@ -15,24 +15,24 @@ KEY3 = [0x9, 0x2, 0x0, 0x2]
 KEY4 = [0x8, 0x6, 0xc, 0xb]
 
 def main():
-    #state = [0xa, 0x6, 0xf, 0x1]
-    #print_1d_hex(state)
-    #encrypt(state)
-    #print_1d_hex(state)
-    #decrypt(state)
-    #print_1d_hex(state)
-
     diff_dist_table = build_difference_distribution_table(SBOX)
 
     round_keys = [[], [], [], [], []]
     num_of_diff_trails = 100
 
+    # Get the last 4 keys
     for round_num in range(3, -1, -1):
         most_probable_differential_trails = find_most_probable_differential_trails(diff_dist_table, round_num, num_of_diff_trails)
         round_keys[round_num + 1] = break_round_key(round_num, most_probable_differential_trails, round_keys)
-        print_2d_hex(round_keys)
+
+    # Get the first key
+    round_keys[0] = break_first_round_key(round_keys)
 
     print_2d_hex(round_keys)
+
+
+
+""" START OF DIFFERENTIAL CRYPTANALYSIS OF SPN """
 
 def break_round_key(round_num, most_probable_differential_trails, round_keys):
     round_key = [0] * 16 # We'll be building this round key
@@ -162,6 +162,31 @@ def partial_decryption(round_num, ciphertext1, ciphertext2, round_keys):
 
     return xor(partially_decrypted1, partially_decrypted2)
 
+def break_first_round_key(round_keys):
+    # Encrypt random plaintext
+    plaintext = choose_random_plaintext()
+    ciphertext = plaintext.copy()
+    encrypt(ciphertext)
+
+    # Decrypt ciphertext all the way to last xor with the round_keys we found
+    add_round_key(ciphertext, round_keys[4])
+    inv_substitute(ciphertext)
+
+    add_round_key(ciphertext, round_keys[3])
+    inv_permutate(ciphertext)
+    inv_substitute(ciphertext)
+
+    add_round_key(ciphertext, round_keys[2])
+    inv_permutate(ciphertext)
+    inv_substitute(ciphertext)
+
+    add_round_key(ciphertext, round_keys[1])
+    inv_permutate(ciphertext)
+    inv_substitute(ciphertext)
+
+    # Get the last key
+    return xor(plaintext, ciphertext)
+
 def find_which_key_bits_will_be_broken(round_num, most_probable_output_xor):
     breaking_key_bits = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -261,15 +286,11 @@ def build_difference_distribution_table(sbox):
 def choose_random_plaintext():
     return [random.randrange(16) for n in range(4)]
 
-def xor(p1, p2):
-    xor = []
+""" END OF DIFFERENTIAL CRYPTANALYSIS OF SPN """
 
-    for i in range(len(p1)):
-        xor.append(p1[i] ^ p2[i])
 
-    return xor
 
-""" SPN Cipher """
+""" START OF SPN CIPHER """
 
 def encrypt(state):
     add_round_key(state, KEY0)
@@ -343,6 +364,20 @@ def add_round_key(state, key):
     for i in range(len(key)):
         state[i] = state[i] ^ key[i]
 
+def xor(p1, p2):
+    xor = []
+
+    for i in range(len(p1)):
+        xor.append(p1[i] ^ p2[i])
+
+    return xor
+
+""" END OF SPN CIPHER """
+
+
+
+""" START OF HELPER FUNCTIONS """
+
 def split_nibbles_into_bits(nibble_array):
     bit_array = []
 
@@ -390,6 +425,8 @@ def print_1d_hex(arr):
     string += ']'
 
     print(string)
+
+""" END OF HELPER FUNCTIONS """
     
 if __name__=="__main__":
     main()
