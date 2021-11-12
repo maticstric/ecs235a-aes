@@ -22,13 +22,28 @@ def main():
 
     # Get the last 4 keys
     for round_num in range(3, -1, -1):
+        print('--- Breaking KEY' + str(round_num + 1) + ' ---')
+        print('Finding most probable differential trails for KEY' + str(round_num + 1) + '...')
         most_probable_differential_trails = find_most_probable_differential_trails(diff_dist_table, round_num, num_of_diff_trails)
         round_keys[round_num + 1] = break_round_key(round_num, most_probable_differential_trails, round_keys)
+        print('\n')
 
     # Get the first key
+    print('--- Breaking KEY0 ---')
     round_keys[0] = break_first_round_key(round_keys)
+    print('*************************************')
+    print('Found KEY0 = ' + get_string_1d_hex(round_keys[0]))
+    print('*************************************')
 
-    print_2d_hex(round_keys)
+    print('\nFound all round keys!\n') 
+
+    print('*********************************')
+    print('  KEY0 = ' + get_string_1d_hex(round_keys[0]))
+    print('  KEY1 = ' + get_string_1d_hex(round_keys[1]))
+    print('  KEY2 = ' + get_string_1d_hex(round_keys[2]))
+    print('  KEY3 = ' + get_string_1d_hex(round_keys[3]))
+    print('  KEY4 = ' + get_string_1d_hex(round_keys[4]))
+    print('*********************************')
 
 
 
@@ -40,7 +55,8 @@ def break_round_key(round_num, most_probable_differential_trails, round_keys):
 
     while not all(sboxes_already_used):
         useful_diff_trail = find_useful_diff_trail(round_num, most_probable_differential_trails, sboxes_already_used)
-        print(useful_diff_trail)
+        print('Found useful differential trail: ' + get_string_1d_hex(useful_diff_trail[1]) + ' -> ' + get_string_1d_hex(useful_diff_trail[2]))
+        print('\tBreaking key bits...')
 
         input_xor = useful_diff_trail[1]
         most_probable_output_xor = useful_diff_trail[2]
@@ -48,6 +64,8 @@ def break_round_key(round_num, most_probable_differential_trails, round_keys):
         breaking_key_bits = find_which_key_bits_will_be_broken(round_num, most_probable_output_xor)
 
         broken_key_bits = break_key_bits(round_num, input_xor, most_probable_output_xor, breaking_key_bits, round_keys)
+
+        print('\tFound key bits ' + get_string_1d_hex(combine_bits_into_nibbles(broken_key_bits)))
 
         # Set the keybits which were broken
         for i in range(len(breaking_key_bits)):
@@ -61,6 +79,10 @@ def break_round_key(round_num, most_probable_differential_trails, round_keys):
 
     # We want it as list of nibbles at the end
     round_key = combine_bits_into_nibbles(round_key)
+
+    print('*************************************')
+    print('  Found KEY' + str(round_num + 1) + ' = ' + get_string_1d_hex(round_key))
+    print('*************************************')
 
     return round_key
 
@@ -399,7 +421,14 @@ def combine_bits_into_nibbles(bits_array):
     return nibble_array
 
 # Normal printing is going to print integers in decimal. For debugging, hex is much easier
+def print_1d_hex(arr):
+    print(get_string_1d_hex(arr))
+
+# Normal printing is going to print integers in decimal. For debugging, hex is much easier
 def print_2d_hex(arr):
+    print(get_string_2d_hex(arr))
+
+def get_string_2d_hex(arr):
     string = '[\n'
 
     for i in range(len(arr)):
@@ -412,10 +441,9 @@ def print_2d_hex(arr):
 
     string += ']'
 
-    print(string)
+    return string
 
-# Normal printing is going to print integers in decimal. For debugging, hex is much easier
-def print_1d_hex(arr):
+def get_string_1d_hex(arr):
     string = '['
 
     for i in range(len(arr)):
@@ -424,7 +452,7 @@ def print_1d_hex(arr):
     string = string[:-2] # remove the ', ' from last element
     string += ']'
 
-    print(string)
+    return string
 
 """ END OF HELPER FUNCTIONS """
     
