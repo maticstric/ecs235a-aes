@@ -3,20 +3,21 @@
 SBOX = [0xe, 0x4, 0xd, 0x1, 0x2, 0xf, 0xb, 0x8, 0x3, 0xa, 0x6, 0xc, 0x5, 0x9, 0x0, 0x7]
 #SBOX = [0x3, 0xe, 0x1, 0xa, 0x4, 0x9, 0x5, 0x6, 0x8, 0xb, 0xf, 0x2, 0xd, 0xc, 0x0, 0x7]
 
-KEY1 = 0x7
-KEY2 = 0xe
+KEY0 = 0x7
+KEY1 = 0xe
 
 def main():
-    #for state in range(16):
-    #    encrypted_state = encrypt(state)
-    #    print(str(state) + " -> " + str(encrypted_state))
-
     diff_dist_table = build_difference_distribution_table(SBOX)
     sorted_differentials = get_most_probable_differentials(build_difference_distribution_table(SBOX))
     good_pair = get_good_pair(sorted_differentials)
     keys = break_keys(good_pair, diff_dist_table)
 
-    print(keys)
+    print('Found both round keys!\n') 
+
+    print('**************')
+    print('  KEY0 = ' + hex(keys[0]))
+    print('  KEY1 = ' + hex(keys[1]))
+    print('**************')
 
 def break_keys(good_pair, diff_dist_table):
     plain0 = good_pair[0]
@@ -98,16 +99,16 @@ def build_difference_distribution_table(sbox):
 """ Toy Cipher """
 
 def encrypt(state):
-    state = add_round_key(state, KEY1)
+    state = add_round_key(state, KEY0)
     state = sub(state)
-    state = add_round_key(state, KEY2)
+    state = add_round_key(state, KEY1)
 
     return state
 
-def encrypt_with_keys(state, key1, key2): # function useful for testing keys
-    state = add_round_key(state, key1)
+def encrypt_with_keys(state, key0, key1): # function useful for testing keys
+    state = add_round_key(state, key0)
     state = sub(state)
-    state = add_round_key(state, key2)
+    state = add_round_key(state, key1)
 
     return state
 
