@@ -2,6 +2,7 @@
 # Differential cryptanalysis based on the same book
 
 import random
+import time
 
 #SBOX = [0xe, 0x4, 0xd, 0x1, 0x2, 0xf, 0xb, 0x8, 0x3, 0xa, 0x6, 0xc, 0x5, 0x9, 0x0, 0x7]
 #INV_SBOX = [0xe, 0x3, 0x4, 0x8, 0x1, 0xc, 0xa, 0xf, 0x7, 0xd, 0x9, 0x6, 0xb, 0x2, 0x0, 0x5]
@@ -26,11 +27,12 @@ KEY4 = [0x8, 0x6, 0xc, 0xb]
 #KEY4 = [0x4, 0xb, 0x4, 0x5]
 
 def main():
+    start = time.time()
+
     diff_dist_table = build_difference_distribution_table(SBOX)
 
     round_keys = [[], [], [], [], []]
     num_of_diff_trails = 100
-
 
     # Get the last 4 keys
     for round_num in range(3, -1, -1):
@@ -47,7 +49,9 @@ def main():
     print('Found KEY0 = ' + get_string_1d_hex(round_keys[0]))
     print('*************************************')
 
-    print('\nFound all round keys!\n') 
+    end = time.time()
+
+    print('\nFound all round keys in ' + str(round(end - start, 2)) + ' seconds!\n') 
 
     print('*********************************')
     print('  KEY0 = ' + get_string_1d_hex(round_keys[0]))
