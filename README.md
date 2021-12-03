@@ -36,7 +36,7 @@ All of the AES code can be found in the [./aes](aes) directory. The directory co
     Used to encrypt the UC Davis seal with both ECB and CBC mode to show their difference. The resulting images are used in our paper.
 
 ## Toy Cipher
-All of the toy cipher code can be found in the [differential-cryptanalysis/toy.py](./differential-cryptanalysis/toy.py) file:
+All of the toy cipher code can be found in the [differential_cryptanalysis/toy.py](./differential_cryptanalysis/toy.py) file:
 
 1. `toy.py`
 
@@ -48,7 +48,7 @@ All of the toy cipher code can be found in the [differential-cryptanalysis/toy.p
     3. `KEY1` — nibble: change the second round key
 
 ## SPN
-All of the SPN code can be found in the [differential-cryptanalysis/spn.py](./differential-cryptanalysis/spn.py) file:
+All of the SPN code can be found in the [differential_cryptanalysis/spn.py](./differential_cryptanalysis/spn.py) file:
 
 1. `spn.py`
 
