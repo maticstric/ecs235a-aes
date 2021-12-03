@@ -4,7 +4,7 @@ This repo contains all the code for the ECS 235A (fall 2021) quarter-long projec
 # How to Run the Code
 Note that Python 3 is required.
 
-Since this was purely an educational exercise, we don't check that the variables that you change are of the correct type/length/format. Please be nice to the scripts.
+For the sake of simplicity, none of the scripts take command line arguments. Instead, you can directly change the variables in the code. This README specifies which variables you should edit (they are also marked in each individual file). Since this was purely an educational exercise, we don't check that the variables that you change will be of the correct type/length/format. Please be nice to the scripts.
 
 There are three major parts to the code:
 1. AES implementation
@@ -42,7 +42,7 @@ All of the toy cipher code can be found in the [differential_cryptanalysis/toy.p
 
     To run this simply run `python3 toy.py`. The `main` function will run the differential cryptanalysis steps outlined in the paper and print out the broken keys. Because this is such a simple cipher, this happens almost instantly.
 
-    Like with our AES cipher, there are no command line arguments. Instead, you can feel free to edit variables in the file directly:
+    There are no command line arguments. Instead, you can feel free to edit variables in the file directly:
     1. `SBOX` — array of nibbles (of length 16): change the SBOX for the cipher
     2. `KEY0` — nibble: change the first round key
     3. `KEY1` — nibble: change the second round key
