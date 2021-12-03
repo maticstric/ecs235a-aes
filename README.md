@@ -62,7 +62,7 @@ All of the SPN code can be found in the [differential_cryptanalysis/spn.py](./di
     5. `KEY2` — array of nibbles (of length 4): change the third round key
     6. `KEY3` — array of nibbles (of length 4): change the fourth round key
     7. `KEY4` — array of nibbles (of length 4): change the fifth round key
-    8. `NUM_CHOSEN_PLAINTEXTS` — int: change the number of chosen plaintexts. Look at the paper to know what this is about.
+    8. `NUM_CHOSEN_PLAINTEXTS` — int: change the number of chosen plaintexts. Look at the paper for more information on this variable
 
     Some commented out SBOXes, PBOXes, and KEYs are there if you want to test something different. Of course, you can also create your own, just make them the right size.
 
