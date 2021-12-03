@@ -16,7 +16,7 @@ All of the AES code can be found in the [./aes](aes) directory. The directory co
 
 1. `aes.py`
 
-    This is the file with the `main` function and should be run to test our implementation (`python3 aes.py`). For the sake of simplicity, it takes no command line arguments. Instead, you can feel free to edit variables in the file directly:
+    This is the file with the `main` function and should be run to test our implementation (`python3 aes.py`). There are no command line arguments. Instead, you can feel free to edit variables in the file directly:
     1. `KEY` — array of bytes (of length 16, 24, or 32): change the key that AES will use. Some example keys (taken from official FIPS documentation) of length 128, 192, and 256 bits are commented out if you want to use them. Note that the `KEY_LENGTH` and `NUM_OF_ROUNDS` are automatically calculated from the length of the `KEY` array you give
     2. `IV` — 4 x 4 array of bytes: change the IV for CBC mode
     3. `MESSAGE_ARRAY` — array of bytes (of any length): change the actual message to encrypt
