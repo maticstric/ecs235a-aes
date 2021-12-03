@@ -21,15 +21,15 @@ All of the AES code can be found in the [./aes](aes) directory. The directory co
     2. `IV` — 4 x 4 array of bytes: change the IV for CBC mode
     3. `MESSAGE_ARRAY` — array of bytes (of any length): change the actual message to encrypt
 
-    Look into the main method to see what the script does. It should be very straightforward. It pads the message array, runs the key schedule, splits the message array into 128 bit blocks, and then encrypts and decrypts the blocks. Currently ECB mode is used but you can replace the encryption function with `encrypt_message_cbc` and add the IV as an argument if you want to try CBC mode (also change the decryption function being used).
+    Look into the main function to see what the script does. It should be very straightforward. It pads the message array, runs the key schedule, splits the message array into 128 bit blocks, and then encrypts and decrypts the blocks. Currently ECB mode is used but you can replace the encryption function with `encrypt_message_cbc` and add the IV as an argument if you want to try CBC mode (also change the decryption function being used).
 
 2. `decrypt_aes.py`
 
-    This includes all the decryption functions for AES. It has no main method and shouldn't be run.
+    This includes all the decryption functions for AES. It has no main function and shouldn't be run.
 
 3. `encrypt_aes.py`
 
-    This includes all the encryption functions for AES. It has no main method and shouldn't be run.
+    This includes all the encryption functions for AES. It has no main function and shouldn't be run.
 
 4. `encrypt_images.py`
 
@@ -40,7 +40,7 @@ All of the toy cipher code can be found in the [differential_cryptanalysis/toy.p
 
 1. `toy.py`
 
-    To run this simply run `python3 toy.py`. The `main` method will run the differential cryptanalysis steps outlined in the paper and print out the broken keys. Because this is such a simple cipher, this happens almost instantly.
+    To run this simply run `python3 toy.py`. The `main` function will run the differential cryptanalysis steps outlined in the paper and print out the broken keys. Because this is such a simple cipher, this happens almost instantly.
 
     Like with our AES cipher, there are no command line arguments. Instead, you can feel free to edit variables in the file directly:
     1. `SBOX` — array of nibbles (of length 16): change the SBOX for the cipher
@@ -52,7 +52,7 @@ All of the SPN code can be found in the [differential_cryptanalysis/spn.py](./di
 
 1. `spn.py`
 
-    To run this simply run `python3 spn.py`. The `main` method will run the step outlined in the paper and print out the broken keys. It takes ~2 min to break them, though it might be more or less depending on the machine.
+    To run this simply run `python3 spn.py`. The `main` function will run the step outlined in the paper and print out the broken keys. It takes ~2 min to break them, though it might be more or less depending on the machine.
 
     There are no command line arguments. Instead, you can feel free to edit variables in the file directly:
     1. `SBOX` & `INV_SBOX` — array of nibbles (of length 16): change the SBOX and INV_SBOX for the cipher. Make sure `INV_SBOX` is actually the inverse of `SBOX` if you make manual changes
