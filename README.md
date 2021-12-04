@@ -4,7 +4,7 @@ This repo contains all the code for the ECS 235A (fall 2021) quarter-long projec
 # How to Run the Code
 Note that Python 3 is required.
 
-For the sake of simplicity, none of the scripts take command line arguments. Instead, you can directly change the variables in the code (they all have default values so you can keep them as they are). This README specifies which variables you can edit (they are also marked in each individual file). Since this was purely an educational exercise, we don't check that the variables that you change will be of the correct type/length/format. Please be nice to the scripts (we are well aware of the irony of saying this while taking a security class).
+For the sake of simplicity, none of the scripts take command line arguments. Instead, you may directly modify certain variables in the code if you want to change them from their default values. This README specifies which variables you can edit (they are also marked in each individual file). Since this was purely an educational exercise, we don't check that the variables that you change will be of the correct type/length/format. Please be nice to the scripts (we are well aware of the irony of saying this while taking a security class).
 
 There are three major parts to the code:
 1. AES implementation
