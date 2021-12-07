@@ -1,5 +1,5 @@
 # ECS 235A — AES and Differential Cryptanalysis
-This repo contains all the code for the ECS 235A (fall 2021) quarter-long project on AES and differential cryptanalyasis.
+This repo contains all the code for the ECS 235A (fall 2021) quarter-long project on AES and differential cryptanalysis.
 
 # How to Run the Code
 Note that Python 3 is required.
@@ -16,12 +16,12 @@ All of the AES code can be found in the [./aes](aes) directory. The directory co
 
 1. `aes.py`
 
-    This is the file with the `main` function and should be run to test our implementation (`python3 aes.py`). There are no command line arguments. Instead, you can feel free to edit the following variables in the file directly:
+    This is the file with the `main` function and should be run to test our implementation (`python3 aes.py`). There are no command-line arguments. Instead, you can feel free to edit the following variables in the file directly:
     1. `KEY` — array of bytes (of length 16, 24, or 32): the key that AES will use. Some example keys (taken from official FIPS documentation) of length 128, 192, and 256 bits are commented out if you want to use them. Note that the `KEY_LENGTH` and `NUM_OF_ROUNDS` are automatically calculated from the length of the `KEY` array you give
     2. `IV` — 4 x 4 array of bytes: the IV for CBC mode
     3. `MESSAGE_ARRAY` — array of bytes (of any length): the actual message to encrypt
 
-    Look into the main function to see what the script does. It should be very straightforward. It pads the message array, runs the key schedule, splits the message array into 128 bit blocks, and then encrypts and decrypts the blocks. Currently ECB mode is used but you can replace the encryption function with `encrypt_message_cbc` and add the IV as an argument if you want to try CBC mode (don't forget to also change the decryption function being used).
+    Look into the main function to see what the script does. It should be very straightforward. It pads the message array, runs the key schedule, splits the message array into 128-bit blocks, and then encrypts and decrypts the blocks. Currently, ECB mode is used but you can replace the encryption function with `encrypt_message_cbc` and add the IV as an argument if you want to try CBC mode (don't forget to also change the decryption function being used).
 
 2. `decrypt_aes.py`
 
@@ -42,7 +42,7 @@ All of the toy cipher code can be found in the [differential_cryptanalysis/toy.p
 
     To run this simply run `python3 toy.py`. The `main` function will run the differential cryptanalysis steps outlined in the paper and print out the broken keys. Because this is such a simple cipher, this happens almost instantly.
 
-    There are no command line arguments. Instead, you can feel free to edit the following variables in the file directly:
+    There are no command-line arguments. Instead, you can feel free to edit the following variables in the file directly:
     1. `SBOX` — array of nibbles (of length 16): the SBOX for the cipher
     2. `KEY0` — nibble: the first round key
     3. `KEY1` — nibble: the second round key
@@ -54,7 +54,7 @@ All of the SPN code can be found in the [differential_cryptanalysis/spn.py](./di
 
     To run this simply run `python3 spn.py`. The `main` function will run the step outlined in the paper and print out the broken keys. It takes ~2 min to break them, though it might be more or less depending on the machine.
 
-    There are no command line arguments. Instead, you can feel free to edit the following variables in the file directly:
+    There are no command-line arguments. Instead, you can feel free to edit the following variables in the file directly:
     1. `SBOX` & `INV_SBOX` — array of nibbles (of length 16): the SBOX and INV_SBOX for the cipher. Make sure `INV_SBOX` is actually the inverse of `SBOX` if you make manual changes
     2. `PBOX` & `INV_PBOX` — array of nibbles (of length 16): the PBOX and INV_PBOX for the cipher. Make sure `INV_PBOX` is actually the inverse of `PBOX` if you make manual changes
     3. `KEY0` — array of nibbles (of length 4): the first round key
